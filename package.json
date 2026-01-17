@@ -1,0 +1,29 @@
+{
+  "name": "floatplane-queue-wxt",
+  "version": "1.0.0",
+  "description": "Cross-browser extension that adds video queueing functionality to Floatplane",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wxt",
+    "dev:firefox": "wxt -b firefox",
+    "dev:chrome": "wxt -b chrome",
+    "dev:edge": "wxt -b edge",
+    "build": "wxt build",
+    "build:firefox": "wxt build -b firefox",
+    "build:chrome": "wxt build -b chrome",
+    "build:edge": "wxt build -b edge",
+    "zip": "wxt zip",
+    "zip:firefox": "wxt zip -b firefox",
+    "zip:chrome": "wxt zip -b chrome",
+    "zip:edge": "wxt zip -b edge",
+    "postinstall": "wxt prepare"
+  },
+  "devDependencies": {
+    "@types/chrome": "^0.0.268",
+    "typescript": "^5.3.3",
+    "wxt": "^0.19.0"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": ""
+}
