@@ -31,5 +31,6 @@
     "wxt": "^0.21.3"
   },
   "license": "GPL-3.0-or-later",
-  "author": ""
+  "author": "",
+  "packageManager": "bun@1.3.14"
 }
