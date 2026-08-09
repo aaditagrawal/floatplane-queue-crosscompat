@@ -17,12 +17,18 @@
     "zip:firefox": "wxt zip -b firefox",
     "zip:chrome": "wxt zip -b chrome",
     "zip:edge": "wxt zip -b edge",
-    "postinstall": "wxt prepare"
+    "postinstall": "wxt prepare",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
+    "format": "oxfmt --write \"**/*.{js,mjs,cjs,ts,tsx,jsx}\" --ignore-path .gitignore --no-error-on-unmatched-pattern",
+    "format:check": "oxfmt --check \"**/*.{js,mjs,cjs,ts,tsx,jsx}\" --ignore-path .gitignore --no-error-on-unmatched-pattern"
   },
   "devDependencies": {
-    "@types/chrome": "^0.0.268",
-    "typescript": "^5.3.3",
-    "wxt": "^0.19.0"
+    "@types/chrome": "^0.2.5",
+    "oxfmt": "^0.62.0",
+    "oxlint": "^1.77.0",
+    "typescript": "^7.0.2",
+    "wxt": "^0.21.3"
   },
   "license": "GPL-3.0-or-later",
   "author": ""
