@@ -35,8 +35,13 @@ export default defineContentScript({
     const loadQueue = async (): Promise<void> => {
       try {
         const result = await browser.storage.local.get(["fp_queue", "fp_queue_index"]);
-        STATE.queue = (result.fp_queue as Video[]) || [];
-        STATE.currentIndex = (result.fp_queue_index as number) ?? -1;
+        // `browser.storage.local.get` hands back `unknown` values, so check the
+        // shape here rather than trusting it. Both keys are written only by
+        // `saveQueue` below, but storage survives extension upgrades.
+        const storedQueue = result.fp_queue;
+        const storedIndex = result.fp_queue_index;
+        STATE.queue = Array.isArray(storedQueue) ? storedQueue : [];
+        STATE.currentIndex = Number.isInteger(storedIndex) ? Number(storedIndex) : -1;
         updateContainerVisibility();
         renderQueue();
         checkAutoAdd();
@@ -272,7 +277,8 @@ export default defineContentScript({
         `;
 
         item.onclick = (e) => {
-          if ((e.target as HTMLElement).closest(".fp-queue-remove")) return;
+          const clicked = e.target;
+          if (clicked instanceof Element && clicked.closest(".fp-queue-remove")) return;
           STATE.currentIndex = index;
           saveQueue();
           window.location.href = video.url;
@@ -310,7 +316,7 @@ export default defineContentScript({
         const title = titleEl?.innerText || document.title;
 
         let thumbnail = "";
-        const metaImg = document.querySelector('meta[property="og:image"]') as HTMLMetaElement;
+        const metaImg = document.querySelector<HTMLMetaElement>('meta[property="og:image"]');
         if (metaImg) thumbnail = metaImg.content;
 
         if (!title || title.length === 0) {
@@ -339,13 +345,13 @@ export default defineContentScript({
       const id = url.split("/post/")[1];
 
       let thumbnail = "";
-      const img = container.querySelector("img") as HTMLImageElement;
+      const img = container.querySelector("img");
       if (img) {
         thumbnail = img.src;
       } else {
         const allDivs = container.querySelectorAll("div");
         for (const div of allDivs) {
-          const bgImage = (div as HTMLElement).style.backgroundImage;
+          const bgImage = div.style.backgroundImage;
           if (bgImage && bgImage !== "none") {
             thumbnail = bgImage.slice(5, -2);
             break;
@@ -425,7 +431,7 @@ export default defineContentScript({
 
         let container: HTMLElement = anchor;
         if (window.getComputedStyle(anchor).position === "static") {
-          container = (anchor.closest("div") as HTMLElement) || anchor;
+          container = anchor.closest("div") || anchor;
         }
 
         if (container.dataset.fpQueueProcessed) return;
@@ -514,9 +520,9 @@ export default defineContentScript({
       if (!STATE.contextValid) return;
 
       const video = document.querySelector("video");
-      if (!video || (video as any).dataset.fpQueueAutoplay) return;
+      if (!video || video.dataset.fpQueueAutoplay) return;
 
-      (video as any).dataset.fpQueueAutoplay = "true";
+      video.dataset.fpQueueAutoplay = "true";
 
       video.addEventListener("ended", () => {
         if (!STATE.contextValid) return;
@@ -558,12 +564,12 @@ export default defineContentScript({
             .catch((err) => {
               console.log("FP Queue: Autoplay blocked, trying play button...", err);
               const playBtn =
-                document.querySelector('[class*="play"]') ||
-                document.querySelector('button[aria-label*="play"]') ||
-                document.querySelector(".vjs-big-play-button") ||
-                document.querySelector('[class*="PlayButton"]');
+                document.querySelector<HTMLElement>('[class*="play"]') ||
+                document.querySelector<HTMLElement>('button[aria-label*="play"]') ||
+                document.querySelector<HTMLElement>(".vjs-big-play-button") ||
+                document.querySelector<HTMLElement>('[class*="PlayButton"]');
               if (playBtn) {
-                (playBtn as HTMLElement).click();
+                playBtn.click();
               }
             });
         } else if (retries > 0) {

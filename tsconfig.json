@@ -10,5 +10,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve"
-  }
+  },
+  "exclude": [
+    "**/node_modules",
+    ".output",
+    "tools/oxlint/anti-slop/**"
+  ]
 }
