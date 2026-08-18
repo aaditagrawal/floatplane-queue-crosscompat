@@ -1,0 +1,15 @@
+# Vendored lint plugin - keeps its own upstream formatting.
+tools/oxlint/anti-slop/
+
+# Agent tooling assets, not project source.
+.agent/
+.agents/
+.claude/
+.codex/
+.continue/
+.cursor/
+.gemini/
+.opencode/
+.pi/
+.roo/
+.windsurf/
