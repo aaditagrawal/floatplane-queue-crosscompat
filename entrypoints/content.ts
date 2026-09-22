@@ -240,6 +240,7 @@ export default defineContentScript({
           const toIndex = index;
           if (fromIndex !== toIndex) {
             const movedItem = STATE.queue.splice(fromIndex, 1)[0];
+            if (!movedItem) return;
             STATE.queue.splice(toIndex, 0, movedItem);
             // Update currentIndex if affected
             if (STATE.currentIndex === fromIndex) {
@@ -300,7 +301,7 @@ export default defineContentScript({
       const path = window.location.pathname;
       if (!path.startsWith("/post/")) return;
 
-      const id = path.split("/post/")[1];
+      const id = path.slice("/post/".length);
 
       const existingIdx = STATE.queue.findIndex((v) => v.id === id);
       if (existingIdx !== -1) {
@@ -342,7 +343,7 @@ export default defineContentScript({
     // --- Injection Logic ---
     const extractVideoInfo = (anchor: HTMLAnchorElement, container: Element): Video => {
       const url = anchor.href;
-      const id = url.split("/post/")[1];
+      const id = url.split("/post/")[1] ?? "";
 
       let thumbnail = "";
       const img = container.querySelector("img");
@@ -400,7 +401,7 @@ export default defineContentScript({
           duration = text;
         } else if (/Duration:\s*(\d+:\d+(:\d+)?)/.test(text)) {
           const match = text.match(/Duration:\s*(\d+:\d+(:\d+)?)/);
-          if (match) duration = match[1];
+          if (match?.[1]) duration = match[1];
         }
       }
 
@@ -473,7 +474,7 @@ export default defineContentScript({
     };
 
     const startObserver = (): void => {
-      let timeout: NodeJS.Timeout;
+      let timeout: ReturnType<typeof setTimeout>;
       const observer = new MutationObserver(() => {
         if (timeout) clearTimeout(timeout);
         timeout = setTimeout(processVideoLinks, 500);
@@ -490,10 +491,11 @@ export default defineContentScript({
       }
 
       const nextIndex = STATE.currentIndex + 1;
-      if (nextIndex < STATE.queue.length) {
+      const nextVideo = STATE.queue[nextIndex];
+      if (nextVideo) {
         STATE.currentIndex = nextIndex;
         saveQueue();
-        window.location.href = STATE.queue[nextIndex].url;
+        window.location.href = nextVideo.url;
       } else {
         showNotification("End of queue");
       }
@@ -506,10 +508,11 @@ export default defineContentScript({
       }
 
       const prevIndex = STATE.currentIndex - 1;
-      if (prevIndex >= 0) {
+      const previousVideo = STATE.queue[prevIndex];
+      if (previousVideo) {
         STATE.currentIndex = prevIndex;
         saveQueue();
-        window.location.href = STATE.queue[prevIndex].url;
+        window.location.href = previousVideo.url;
       } else {
         showNotification("Beginning of queue");
       }
@@ -529,8 +532,8 @@ export default defineContentScript({
         console.log("Video ended.");
         loadQueue().then(() => {
           const nextIndex = STATE.currentIndex + 1;
-          if (nextIndex < STATE.queue.length) {
-            const nextVideo = STATE.queue[nextIndex];
+          const nextVideo = STATE.queue[nextIndex];
+          if (nextVideo) {
             console.log("Autoplaying next:", nextVideo.title);
             showNotification(`Up Next: ${nextVideo.title}`);
             setTimeout(() => {
@@ -581,7 +584,7 @@ export default defineContentScript({
     };
 
     // Initialize
-    let autoplayInterval: NodeJS.Timeout;
+    let autoplayInterval: ReturnType<typeof setTimeout>;
     const init = (): void => {
       STATE.contextValid = true;
       createQueuePanel();
