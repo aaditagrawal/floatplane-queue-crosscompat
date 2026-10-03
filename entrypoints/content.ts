@@ -19,7 +19,6 @@ export default defineContentScript({
     interface QueueState {
       queue: Video[];
       currentIndex: number;
-      isOpen: boolean;
       contextValid: boolean;
     }
 
@@ -27,12 +26,11 @@ export default defineContentScript({
     const STATE: QueueState = {
       queue: [],
       currentIndex: -1,
-      isOpen: false,
       contextValid: true,
     };
 
     // --- Storage ---
-    const loadQueue = async (): Promise<void> => {
+    const loadQueue = async (autoplay = true): Promise<void> => {
       try {
         const result = await browser.storage.local.get(["fp_queue", "fp_queue_index"]);
         // `browser.storage.local.get` hands back `unknown` values, so check the
@@ -45,7 +43,7 @@ export default defineContentScript({
         updateContainerVisibility();
         renderQueue();
         checkAutoAdd();
-        tryAutoPlayVideo();
+        if (autoplay) tryAutoPlayVideo();
       } catch {
         STATE.contextValid = false;
         // Silent - extension was reloaded, user should refresh
@@ -71,7 +69,6 @@ export default defineContentScript({
       if (container) {
         if (STATE.queue.length === 0) {
           container.style.display = "none";
-          STATE.isOpen = false;
           container.classList.add("fp-queue-collapsed");
         } else {
           container.style.display = "flex";
@@ -160,7 +157,6 @@ export default defineContentScript({
       `;
       toggleBtn.onclick = () => {
         container.classList.toggle("fp-queue-collapsed");
-        STATE.isOpen = !container.classList.contains("fp-queue-collapsed");
       };
 
       const content = document.createElement("div");
@@ -530,7 +526,7 @@ export default defineContentScript({
       video.addEventListener("ended", () => {
         if (!STATE.contextValid) return;
         console.log("Video ended.");
-        loadQueue().then(() => {
+        loadQueue(false).then(() => {
           const nextIndex = STATE.currentIndex + 1;
           const nextVideo = STATE.queue[nextIndex];
           if (nextVideo) {
