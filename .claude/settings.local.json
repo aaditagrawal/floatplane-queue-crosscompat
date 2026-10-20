@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun run build:*)",
+      "Bash(bun i:*)",
+      "Bash(bun run:*)",
+      "Bash(file:*)",
+      "Bash(sips:*)",
+      "Bash(python3:*)",
+      "WebFetch(domain:extensionworkshop.com)",
+      "WebSearch",
+      "Bash(git add:*)"
+    ]
+  }
+}

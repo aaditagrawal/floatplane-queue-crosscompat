@@ -1,8 +1,10 @@
 {
   "name": "floatplane-queue-wxt",
   "version": "1.0.0",
-  "description": "Cross-browser extension that adds video queueing functionality to Floatplane",
   "private": true,
+  "description": "Cross-browser extension that adds video queueing functionality to Floatplane",
+  "license": "GPL-3.0-or-later",
+  "author": "",
   "type": "module",
   "scripts": {
     "dev": "wxt",
@@ -18,21 +20,23 @@
     "zip:chrome": "wxt zip -b chrome",
     "zip:edge": "wxt zip -b edge",
     "postinstall": "wxt prepare",
-    "lint": "oxlint .",
-    "lint:fix": "oxlint . --fix",
-    "format": "oxfmt --write \"**/*.{js,mjs,cjs,ts,tsx,jsx}\" --ignore-path .gitignore --ignore-path .oxfmtignore --no-error-on-unmatched-pattern",
-    "format:check": "oxfmt --check \"**/*.{js,mjs,cjs,ts,tsx,jsx}\" --ignore-path .gitignore --ignore-path .oxfmtignore --no-error-on-unmatched-pattern",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsrs --noEmit",
+    "lint": "oxlint",
+    "format": "oxfmt --write . --ignore-path .oxfmtignore",
+    "format:check": "oxfmt --check . --ignore-path .oxfmtignore",
+    "lint:fix": "oxlint --fix"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
   },
   "devDependencies": {
-    "@oxlint/plugins": "^1.78.0",
-    "@types/chrome": "^0.2.5",
-    "oxfmt": "^0.62.0",
-    "oxlint": "^1.78.0",
-    "typescript": "^7.0.2",
-    "wxt": "^0.21.3"
-  },
-  "license": "GPL-3.0-or-later",
-  "author": "",
-  "packageManager": "bun@1.3.14"
+    "@oxlint/plugins": "^1.89.0",
+    "@types/chrome": "^0.3.5",
+    "oxfmt": "^0.74.0",
+    "oxlint": "^1.89.0",
+    "tsrs": "0.18.0-ts7.1.0-dev.20260929",
+    "typescript": "7.0.2",
+    "vite": "^8.3.4",
+    "wxt": "^0.21.4"
+  }
 }

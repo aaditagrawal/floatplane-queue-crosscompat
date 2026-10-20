@@ -11,9 +11,5 @@
     "isolatedModules": true,
     "jsx": "preserve"
   },
-  "exclude": [
-    "**/node_modules",
-    ".output",
-    "tools/oxlint/anti-slop/**"
-  ]
+  "exclude": ["**/node_modules", ".output", "tools/oxlint/anti-slop/**"]
 }

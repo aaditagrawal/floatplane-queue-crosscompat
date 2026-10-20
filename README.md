@@ -15,6 +15,7 @@ A cross-browser extension that adds video queueing functionality to Floatplane, 
 ## Browser Compatibility
 
 Built with WXT, this extension works across:
+
 - Chrome/Chromium
 - Firefox
 - Edge
@@ -31,11 +32,13 @@ Built with WXT, this extension works across:
 ### Getting Started
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Start development server:
+
 ```bash
 # Chrome (default)
 npm run dev
@@ -52,11 +55,13 @@ npm run dev:edge
 ### Building for Production
 
 Build for all browsers:
+
 ```bash
 npm run build
 ```
 
 Build for specific browsers:
+
 ```bash
 npm run build:chrome
 npm run build:firefox
@@ -64,6 +69,7 @@ npm run build:edge
 ```
 
 Create distribution packages:
+
 ```bash
 npm run zip          # All browsers
 npm run zip:chrome   # Chrome only
@@ -116,6 +122,7 @@ wxt-extension/
 ### Auto-Play
 
 When a video finishes playing, the extension will automatically:
+
 1. Show a notification with the next video's title
 2. Wait 1.5 seconds
 3. Navigate to the next video in your queue
