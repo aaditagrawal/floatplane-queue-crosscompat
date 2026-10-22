@@ -27,7 +27,7 @@ Built with WXT, this extension works across:
 
 ### Prerequisites
 
-- Node.js 18+ and npm/pnpm/yarn
+- Node.js 24.22.1, pinned in `.node-version`, and Bun
 
 ### Getting Started
 
