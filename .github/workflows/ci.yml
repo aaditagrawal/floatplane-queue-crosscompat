@@ -76,6 +76,12 @@ jobs:
       - name: Build Chrome
         run: bun run build:chrome
 
+      - name: Typecheck
+        run: bun run typecheck
+
+      - name: Test
+        run: bun test
+
   ci-ok:
     name: CI OK
     if: always()

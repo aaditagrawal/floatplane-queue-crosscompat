@@ -1,5 +1,5 @@
 import "./content-styles.css";
-import { z } from "zod";
+import { decodeCreatorSummary, decodeQueueStorage } from "../utils/decoders";
 import type {
   QueueVideo,
   QueueState,
@@ -10,40 +10,6 @@ import type {
 } from "../utils/types";
 import { DEFAULT_SETTINGS } from "../utils/types";
 import * as api from "../utils/api";
-
-// Decode persisted extension state before it enters the queue model.
-const queueVideoSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  url: z.string(),
-  thumbnail: z.string(),
-  duration: z.string(),
-  durationSeconds: z.number(),
-  subchannel: z.string().optional(),
-  creatorId: z.string().optional(),
-  creatorName: z.string().optional(),
-  releaseDate: z.string().optional(),
-  progress: z.number().optional(),
-  attachmentId: z.string().optional(),
-});
-const queueStorageSchema = z.object({
-  fp_queue: z.array(queueVideoSchema).nullish(),
-  fp_queue_index: z.number().nullish(),
-  fp_queue_sort: z
-    .enum([
-      "manual",
-      "newest",
-      "oldest",
-      "duration-asc",
-      "duration-desc",
-      "title-asc",
-      "title-desc",
-    ])
-    .nullish(),
-  fp_queue_repeat: z.enum(["none", "one", "all"]).nullish(),
-  fp_queue_shuffle: z.boolean().optional(),
-});
-const creatorSummarySchema = z.object({ id: z.string(), title: z.string() });
 
 export default defineContentScript({
   matches: ["*://*.floatplane.com/*"],
@@ -88,7 +54,7 @@ export default defineContentScript({
 
     const loadQueue = async (): Promise<void> => {
       try {
-        const result = queueStorageSchema.parse(
+        const result = decodeQueueStorage(
           await browser.storage.local.get([
             "fp_queue",
             "fp_queue_index",
@@ -1418,8 +1384,7 @@ export default defineContentScript({
       addBtn.appendChild(createIcon("plus", 14));
       addBtn.onclick = (e) => {
         e.stopPropagation();
-        const parsedCreator = creatorSummarySchema.safeParse(post.creator);
-        const creator = parsedCreator.success ? parsedCreator.data : undefined;
+        const creator = decodeCreatorSummary(post.creator);
         const video: QueueVideo = {
           id: post.id,
           title: post.title,
@@ -1442,8 +1407,7 @@ export default defineContentScript({
       addNextBtn.appendChild(createIcon("next", 14));
       addNextBtn.onclick = (e) => {
         e.stopPropagation();
-        const parsedCreator = creatorSummarySchema.safeParse(post.creator);
-        const creator = parsedCreator.success ? parsedCreator.data : undefined;
+        const creator = decodeCreatorSummary(post.creator);
         const video: QueueVideo = {
           id: post.id,
           title: post.title,
